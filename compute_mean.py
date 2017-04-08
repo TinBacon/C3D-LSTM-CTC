@@ -5,11 +5,10 @@ import skimage.transform
 import pickle
 import pdb
 import scipy.io as sio
+import cv2
 
-
-clip_length = 40
-H_resize = 240  # 128
-W_resize = 320  # 171
+H_resize = 120  # 128
+W_resize = 160  # 171
 img_channels = 3
 
 file_train = "/data/bacon/R3DCNN/lists/trn_imgs.txt"  
@@ -19,29 +18,29 @@ print file_train
 
 ############ Generate the training npz ################
 resized_clips_train = []
-
+img_list = []
 for line in open(file_train, 'r'):
+
     #print line 
+    img_list.append(cv2.imread(line.strip()))
+
+h, w, _ = img_list[0].shape
+clip_length = len(img_list)
+resized_clip = np.zeros((img_channels, clip_length, H_resize, W_resize), dtype=np.float)
+
+for i in range(0, clip_length):   # [0,1,2,...,39]
+
+    img = img_list[i]
+
+    if h != H_resize or w != W_resize:
+        img_resized = skimage.transform.resize(img, (H_resize, W_resize), preserve_range=True)
+    else:
+        img_resized = img
+
+    img_resized = np.rollaxis(img_resized, 2, 0)  # from 128*171*3 to 3*128*171
+    resized_clip[:, i, :, :] = img_resized
     
-    Dir_inst_mat = line.strip()
-    img_list = sio.loadmat(Dir_inst_mat)['gesture_inst']
-
-    h, w, _ = img_list[0].shape
-    resized_clip = np.zeros((img_channels, clip_length, H_resize, W_resize), dtype=np.float)
-
-    for i in range(0, clip_length):   # [0,1,2,...,39]
-
-        img = img_list[i]
-
-        if h != H_resize or w != W_resize:
-            img_resized = skimage.transform.resize(img, (H_resize, W_resize), preserve_range=True)
-        else:
-            img_resized = img
-
-        img_resized = np.rollaxis(img_resized, 2, 0)  # from 128*171*3 to 3*128*171
-        resized_clip[:, i, :, :] = img_resized
-
-    resized_clips_train.append(resized_clip)
+resized_clips_train.append(resized_clip)
 
 
 # need to be checked
@@ -49,6 +48,7 @@ x_train = np.rollaxis(np.array(resized_clips_train), 2, 1)   # form N*3*16*128*1
 
 x_train_dim = x_train.shape
 x_train_reshape = np.reshape(x_train, (-1,) + x_train_dim[2:])
+
 print "x_train_reshape.shape:", x_train_reshape.shape
 print np.amax(x_train_reshape), np.amin(x_train_reshape), np.mean(x_train_reshape)
 
