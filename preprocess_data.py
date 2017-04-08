@@ -114,8 +114,8 @@ def trav(path):
                     ftst.write(mat_path+'\n')
                 else:
                     ftrn.write(mat_path+'\n')
-                    for path in img_dir_list:
-                        ftrn_i.write(path+"\n")
+                    for img_path in img_dir_list:
+                        ftrn_i.write(img_path+"\n")
                     
                 count = (count + 1) % 10
                 label_num += 1
