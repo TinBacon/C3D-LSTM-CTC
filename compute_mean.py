@@ -1,10 +1,7 @@
 from __future__ import division
 import numpy as np
-from scipy.misc import imread, imsave, imresize
 import skimage.transform
-import pickle
 import pdb
-import scipy.io as sio
 import cv2
 
 H_resize = 120  # 128
