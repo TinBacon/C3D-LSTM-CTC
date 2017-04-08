@@ -4,9 +4,10 @@ import cv2
 import csv
 import numpy as np
 
-def make_gesture(start, end, img_dir):
+def make_gesture(start, end):
     mask = []
     img_list = []  
+    img_dir = os.path.split(path)[0].replace('labels/s', 'images_160-120/S') + '/Color/rgb' + os.path.splitext(path)[0][-1]
 
     length = start - end + 1
     if length > 40:
@@ -63,8 +64,6 @@ def trav(path):
 
         # file is csv file
         if os.path.splitext(path)[1] == ".csv":
-            
-            img_dir = os.path.split(path)[0].replace('labels/s', 'images_160-120/S') + '/Color/rgb' + os.path.splitext(path)[0][-1]
 
             # read labels
             label_file = open(path)
@@ -76,6 +75,7 @@ def trav(path):
             for row in label_csv:
                 print(path+'  '+str(label_num))
 
+                label = int(row[0])
                 start = int(row[1])
                 end = int(row[2])
 
@@ -83,11 +83,11 @@ def trav(path):
                 if not start or not end or not label:
                     continue
                 
-                mat_path = path.replace("labels", "R3DCNN/clips").replace('.csv', '_%d.mat'%label_num)
+                mat_path = path.replace("labels", "clips").replace('.csv', '_%d.mat'%label_num)
                 # have not make mat file
                 if not os.path.isfile(mat_path):
 
-                    img_list, mask = make_gesture(start, end, img_dir)
+                    img_list, mask = make_gesture(start, end)
                     # save datas and label
                     sio.savemat(mat_path, {'gesture_inst':img_list, 'gesture_label':int(row[0]), 'mask':mask})
                 
@@ -108,7 +108,7 @@ ftst = open("tst_instance.txt", "w")
 fval = open("val_instance.txt", "w")
 
 count = 0
-trav("/shared/RS/labels/")
+trav("/data/bacon/R3DCNN/labels/")
 
 ftrn.close()
 fval.close()
