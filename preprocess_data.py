@@ -112,9 +112,9 @@ def trav(path):
                 label_num += 1
 
 
-ftrn = open("trn_instance.txt", "w")
-ftst = open("tst_instance.txt", "w")
-fval = open("val_instance.txt", "w")
+ftrn = open("/data/bacon/R3DCNN/lists/trn_list.txt", "w")
+ftst = open("/data/bacon/R3DCNN/lists/tst_list.txt", "w")
+fval = open("/data/bacon/R3DCNN/lists/val_list.txt", "w")
 
 count = 0
 trav("/data/bacon/R3DCNN/labels/")
