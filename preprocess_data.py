@@ -16,24 +16,37 @@ def make_gesture(start, end, path):
         skip = 100000
 
     # get images and masks
-    for num in range(start-4, start):
-        img_path = img_dir + '/%06d.jpg'%num
-        img_list.append(cv2.imread(img_path))
+    if start <= 4:
+        frame_start = 1
+    else:
+        frame_start = start-4
+    for num in range(frame_start, start):
+        img = cv2.imread(img_dir + '/%06d.jpg'%num)
+        if img is None:
+            print(num)
+            exit()
+        img_list.append(img)
         mask += [1]
 
     count_skip = 1
     for num in range(start, end+1):
 
         if count_skip:
-            img_path = img_dir + '/%06d.jpg'%num
-            img_list.append(cv2.imread(img_path))
+            img = cv2.imread(img_dir + '/%06d.jpg'%num)
+            if img is None:
+                print(num)
+                exit()
+            img_list.append(img)
             mask += [1]
         count_skip = (count_skip + 1) % skip
 
     for num in range(end+1, end+5+(40-len(img_list))):
-        img_path = img_dir + '/%06d.jpg'%num
-        img_list.append(cv2.imread(img_path))
-        mask += [1]
+        img = cv2.imread(img_dir + '/%06d.jpg'%num)
+        if not img is None:
+            img_list.append(img)
+            mask += [1]
+        else:
+            mask += [0]
     
     return img_list, np.array(mask)
 
@@ -75,19 +88,15 @@ def trav(path):
             for row in label_csv:
                 print(path+'  '+str(label_num))
 
-                label = int(row[0])
-                start = int(row[1])
-                end = int(row[2])
-
                 # if none
-                if not start or not end or not label:
+                if not row[0] or not row[1] or not row[2]:
                     continue
                 
                 mat_path = path.replace("labels", "clips").replace('.csv', '_%d.mat'%label_num)
                 # have not make mat file
                 if not os.path.isfile(mat_path):
 
-                    img_list, mask = make_gesture(start, end, path)
+                    img_list, mask = make_gesture(int(row[1]), int(row[2]), path)
                     # save datas and label
                     sio.savemat(mat_path, {'gesture_inst':img_list, 'gesture_label':int(row[0]), 'mask':mask})
                 
