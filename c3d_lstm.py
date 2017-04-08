@@ -89,7 +89,7 @@ MONITOR = False   # False
 MAX_NORM = 50.0  # 5.0
 LOOK_AHEAD = 50
 
-mask_length = 40
+mask_length = 48
 clip_length = 16  # 16
 clip_stride = 8
 H_resize = 240  # 128  # 256
