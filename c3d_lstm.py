@@ -133,9 +133,9 @@ Dir_features = "/data/bacon/R3DCNN/"
 # list_masks = os.listdir(Dir_instances + file_name_mask)
 
 # trn, val, tst files
-ftrn = open("trn_instance.txt", "r")
-fval = open("val_instance.txt", "r")
-ftst = open("tst_instance.txt", "r")
+ftrn = open("/data/bacon/R3DCNN/lists/trn_clips.txt", "r")
+ftst = open("/data/bacon/R3DCNN/lists/tst_clips.txt", "r")
+fval = open("/data/bacon/R3DCNN/lists/val_clips.txt", "r")
 list_instances_trn = [line.strip for line in ftrn.readlines()]
 list_instances_val = [line.strip for line in fval.readlines()]
 list_instances_tst = [line.strip for line in ftst.readlines()]

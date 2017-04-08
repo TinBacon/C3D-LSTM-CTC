@@ -12,7 +12,7 @@ H_resize = 240  # 128
 W_resize = 320  # 171
 img_channels = 3
 
-file_train = "/home/bacon/R3DCNN/trn_instance.txt"  
+file_train = "/data/bacon/R3DCNN/lists/trn_imgs.txt"  
 Dir_output_npz = "/data/bacon/R3DCNN/"
 
 print file_train

@@ -6,7 +6,8 @@ import numpy as np
 
 def make_gesture(start, end, path):
     mask = []
-    img_list = []  
+    img_list = [] 
+    img_dir_list = [] 
     img_dir = os.path.split(path)[0].replace('labels/s', 'images_160-120/S') + '/Color/rgb' + os.path.splitext(path)[0][-1]
 
     length = start - end + 1
@@ -21,34 +22,40 @@ def make_gesture(start, end, path):
     else:
         frame_start = start-4
     for num in range(frame_start, start):
-        img = cv2.imread(img_dir + '/%06d.jpg'%num)
+        img_path = img_dir + '/%06d.jpg'%num
+        img = cv2.imread(img_path)
         if img is None:
             print(num)
             exit()
         img_list.append(img)
+        img_dir_list.append(img_path) 
         mask += [1]
 
     count_skip = 1
     for num in range(start, end+1):
 
         if count_skip:
-            img = cv2.imread(img_dir + '/%06d.jpg'%num)
+            img_path = img_dir + '/%06d.jpg'%num
+            img = cv2.imread(img_path)
             if img is None:
                 print(num)
                 exit()
             img_list.append(img)
+            img_dir_list.append(img_path)
             mask += [1]
         count_skip = (count_skip + 1) % skip
 
     for num in range(end+1, end+5+(40-len(img_list))):
-        img = cv2.imread(img_dir + '/%06d.jpg'%num)
+        img_path = img_dir + '/%06d.jpg'%num
+        img = cv2.imread(img_path)
         if not img is None:
             img_list.append(img)
+            img_dir_list.append(img_path)
             mask += [1]
         else:
             mask += [0]
     
-    return img_list, np.array(mask)
+    return img_list, np.array(mask), img_dir_list
 
 def trav(path):
 
@@ -96,7 +103,7 @@ def trav(path):
                 # have not make mat file
                 if not os.path.isfile(mat_path):
 
-                    img_list, mask = make_gesture(int(row[1]), int(row[2]), path)
+                    img_list, mask, img_dir_list = make_gesture(int(row[1]), int(row[2]), path)
                     # save datas and label
                     sio.savemat(mat_path, {'gesture_inst':img_list, 'gesture_label':int(row[0]), 'mask':mask})
                 
@@ -107,14 +114,17 @@ def trav(path):
                     ftst.write(mat_path+'\n')
                 else:
                     ftrn.write(mat_path+'\n')
+                    for path in img_dir_list:
+                        ftrn_i.write(path+"\n")
                     
                 count = (count + 1) % 10
                 label_num += 1
 
 
-ftrn = open("/data/bacon/R3DCNN/lists/trn_list.txt", "w")
-ftst = open("/data/bacon/R3DCNN/lists/tst_list.txt", "w")
-fval = open("/data/bacon/R3DCNN/lists/val_list.txt", "w")
+ftrn_i = open("/data/bacon/R3DCNN/lists/trn_imgs.txt", "w")
+ftrn = open("/data/bacon/R3DCNN/lists/trn_clips.txt", "w")
+ftst = open("/data/bacon/R3DCNN/lists/tst_clips.txt", "w")
+fval = open("/data/bacon/R3DCNN/lists/val_clips.txt", "w")
 
 count = 0
 trav("/data/bacon/R3DCNN/labels/")
@@ -122,3 +132,4 @@ trav("/data/bacon/R3DCNN/labels/")
 ftrn.close()
 fval.close()
 ftst.close()
+ftrn_i.close()
