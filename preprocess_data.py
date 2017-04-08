@@ -4,7 +4,7 @@ import cv2
 import csv
 import numpy as np
 
-def make_gesture(start, end):
+def make_gesture(start, end, path):
     mask = []
     img_list = []  
     img_dir = os.path.split(path)[0].replace('labels/s', 'images_160-120/S') + '/Color/rgb' + os.path.splitext(path)[0][-1]
@@ -87,7 +87,7 @@ def trav(path):
                 # have not make mat file
                 if not os.path.isfile(mat_path):
 
-                    img_list, mask = make_gesture(start, end)
+                    img_list, mask = make_gesture(start, end, path)
                     # save datas and label
                     sio.savemat(mat_path, {'gesture_inst':img_list, 'gesture_label':int(row[0]), 'mask':mask})
                 
