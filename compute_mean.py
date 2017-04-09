@@ -7,7 +7,7 @@ import cv2
 H_resize = 120  # 128
 W_resize = 160  # 171
 img_channels = 3
-length = 48
+length = 100
 
 file_train = "/data/bacon/R3DCNN/lists/trn_imgs.txt"  
 Dir_output_npz = "/data/bacon/R3DCNN/"
@@ -20,12 +20,17 @@ image_mean_list = []
 
 lines = open(file_train, 'r').readlines()
 
-for line_num in range(0, len(lines), length):
+for start in range(0, len(lines), length):
 
     img_list = []
     resized_clips_train = []
 
-    for line_num_num in range(line_num, line_num+length):
+    if start+length > len(lines):
+        end = len(lines)
+    else:
+        end = start+length
+
+    for line_num_num in range(start, end):
         img = cv2.imread(lines[line_num_num].strip())
         if not img is None:
             img_list.append(img)   
@@ -50,13 +55,13 @@ for line_num in range(0, len(lines), length):
 
 
     # need to be checked
-    x_train = np.rollaxis(np.array(resized_clips_train), 2, 1)   # form N*3*48*120*160 to N*48*3*120*160
+    x_train = np.rollaxis(np.array(resized_clips_train), 2, 1)   # form 1*3*48*120*160 to 1*48*3*120*160
     # x_train = np.array(resized_clips_train)
 
     x_train_dim = x_train.shape
     x_train_reshape = np.reshape(x_train, (-1,) + x_train_dim[2:])
 
-    print "x_train_reshape.shape:", x_train_reshape.shape
+    print start, "   x_train_reshape.shape:", x_train_reshape.shape
     print np.amax(x_train_reshape), np.amin(x_train_reshape), np.mean(x_train_reshape)
 
     pixel_mean = np.mean(x_train_reshape, axis=0)
