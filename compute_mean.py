@@ -23,6 +23,7 @@ lines = open(file_train, 'r').readlines()
 for line_num in range(0, len(lines), length):
 
     img_list = []
+    resized_clips_train = []
 
     for line_num_num in range(line_num, line_num+length):
         img = cv2.imread(lines[line_num_num].strip())
@@ -44,10 +45,12 @@ for line_num in range(0, len(lines), length):
 
         img_resized = np.rollaxis(img_resized, 2, 0)  # from 128*171*3 to 3*128*171
         resized_clip[:, i, :, :] = img_resized
+        
+    resized_clips_train.append(resized_clip)
 
 
     # need to be checked
-    x_train = np.rollaxis(np.array(resized_clip), 2, 1)   # form N*3*16*128*171 to N*16*3*128*171
+    # x_train = np.rollaxis(np.array(resized_clips_train), 2, 1)   # form N*3*16*128*171 to N*16*3*128*171
 
     x_train_dim = x_train.shape
     x_train_reshape = np.reshape(x_train, (-1,) + x_train_dim[2:])
