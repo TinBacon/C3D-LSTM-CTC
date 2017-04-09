@@ -43,14 +43,15 @@ for line_num in range(0, len(lines), length):
         else:
             img_resized = img
 
-        img_resized = np.rollaxis(img_resized, 2, 0)  # from 128*171*3 to 3*128*171
+        img_resized = np.rollaxis(img_resized, 2, 0)  # from 120*160*3 to 3*120*160
         resized_clip[:, i, :, :] = img_resized
         
     resized_clips_train.append(resized_clip)
 
 
     # need to be checked
-    # x_train = np.rollaxis(np.array(resized_clips_train), 2, 1)   # form N*3*16*128*171 to N*16*3*128*171
+    # x_train = np.rollaxis(np.array(resized_clips_train), 2, 1)   # form N*3*48*120*160 to N*48*3*120*160
+    x_train = np.array(resized_clips_train)
 
     x_train_dim = x_train.shape
     x_train_reshape = np.reshape(x_train, (-1,) + x_train_dim[2:])
