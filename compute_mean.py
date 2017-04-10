@@ -56,7 +56,6 @@ for start in range(0, len(lines), length):
 
     # need to be checked
     x_train = np.rollaxis(np.array(resized_clips_train), 2, 1)   # form 1*3*48*120*160 to 1*48*3*120*160
-    # x_train = np.array(resized_clips_train)
 
     x_train_dim = x_train.shape
     x_train_reshape = np.reshape(x_train, (-1,) + x_train_dim[2:])

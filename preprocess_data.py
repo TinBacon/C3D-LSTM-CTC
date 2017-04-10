@@ -10,17 +10,20 @@ def make_gesture(start, end, path):
     img_dir_list = [] 
     img_dir = os.path.split(path)[0].replace('labels/s', 'images_160-120/S') + '/Color/rgb' + os.path.splitext(path)[0][-1]
 
+    valid_length = 40
+    invalid_length = 16
+
     length = start - end + 1
-    if length > 40:
-        skip = int(40 / (length - 40)) + 1
+    if length > valid_length:
+        skip = int(valid_length / (length - valid_length)) + 1
     else:
         skip = 100000
 
     # get images and masks
-    if start <= 4:
+    if start <= invalid_length/2:
         frame_start = 1
     else:
-        frame_start = start-4
+        frame_start = start-invalid_length/2
     for num in range(frame_start, start):
         img_path = img_dir + '/%06d.jpg'%num
         img = cv2.imread(img_path)
@@ -45,7 +48,7 @@ def make_gesture(start, end, path):
             mask += [1]
         count_skip = (count_skip + 1) % skip
 
-    for num in range(end+1, end+5+(40-len(img_list))):
+    for num in range(end+1, end+(invalid_length+valid_length-len(img_list))+1):
         img_path = img_dir + '/%06d.jpg'%num
         img = cv2.imread(img_path)
         if not img is None:
@@ -54,7 +57,11 @@ def make_gesture(start, end, path):
             mask += [1]
         else:
             mask += [0]
-    
+
+    if not len(img_list) == 60:
+        print(len(img_list))
+        exit()
+
     return img_list, np.array(mask), img_dir_list
 
 def trav(path):
