@@ -13,7 +13,7 @@ def make_gesture(start, end, path):
     valid_length = 40
     invalid_length = 16
 
-    length = start - end + 1
+    length = end - start + 1
     if length > valid_length:
         skip = int(valid_length / (length - valid_length)) + 1
     else:
@@ -24,6 +24,7 @@ def make_gesture(start, end, path):
         frame_start = 1
     else:
         frame_start = start-invalid_length/2
+
     for num in range(frame_start, start):
         img_path = img_dir + '/%06d.jpg'%num
         img = cv2.imread(img_path)
@@ -33,7 +34,7 @@ def make_gesture(start, end, path):
         img_list.append(img)
         img_dir_list.append(img_path) 
         mask += [1]
-
+    
     count_skip = 1
     for num in range(start, end+1):
 
@@ -47,6 +48,9 @@ def make_gesture(start, end, path):
             img_dir_list.append(img_path)
             mask += [1]
         count_skip = (count_skip + 1) % skip
+        
+    if len(mask) > valid_length+invalid_length/2:
+        print(len(mask))
 
     for num in range(end+1, end+(invalid_length+valid_length-len(img_list))+1):
         img_path = img_dir + '/%06d.jpg'%num
@@ -57,11 +61,11 @@ def make_gesture(start, end, path):
             mask += [1]
         else:
             mask += [0]
-
+    
     if not len(mask) == valid_length+invalid_length:
         print(len(mask))
         exit()
-
+    
     return img_list, np.array(mask), img_dir_list
 
 def trav(path):
@@ -99,7 +103,7 @@ def trav(path):
             label_num = 0
 
             # extract datas
-            for row in label_csv:
+            for row in label_csv:                            
                 print(path+'  '+str(label_num))
 
                 # if none
@@ -127,6 +131,7 @@ def trav(path):
                 count = (count + 1) % 10
                 label_num += 1
 
+os.system("rm -rf /data/bacon/R3DCNN/clips/")
 
 ftrn_i = open("/data/bacon/R3DCNN/lists/trn_imgs.txt", "w")
 ftrn = open("/data/bacon/R3DCNN/lists/trn_clips.txt", "w")
