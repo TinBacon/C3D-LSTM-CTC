@@ -58,7 +58,7 @@ def make_gesture(start, end, path):
         else:
             mask += [0]
 
-    if not len(img_list) == 60:
+    if not len(img_list) == valid_length+invalid_length:
         print(len(img_list))
         exit()
 
