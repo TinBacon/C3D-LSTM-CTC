@@ -25,10 +25,7 @@ for start in range(0, len(lines), length):
     img_list = []
     resized_clips_train = []
 
-    if start+length > len(lines):
-        end = len(lines)
-    else:
-        end = start+length
+    end = min(start+length, len(lines))
 
     for line_num_num in range(start, end):
         img = cv2.imread(lines[line_num_num].strip())
@@ -68,7 +65,7 @@ for start in range(0, len(lines), length):
 
     image_mean = np.reshape(pixel_mean, (img_channels, -1))
     image_mean = np.mean(image_mean, axis=1)
-    image_mean_list .append(image_mean)
+    image_mean_list.append(image_mean)
 
 # the mean values should be subtracted
 pixel_mean_list = np.array(pixel_mean_list)
