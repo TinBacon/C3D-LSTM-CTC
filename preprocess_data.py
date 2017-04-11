@@ -52,7 +52,8 @@ def make_gesture(start, end, path):
     if len(mask) > valid_length+invalid_length/2:
         print(len(mask))
 
-    for num in range(end+1, end+(invalid_length+valid_length-len(img_list))+1):
+    pre_length = len(mask)
+    for num in range(end+1, end+(invalid_length+valid_length-pre_length)+1):
         img_path = img_dir + '/%06d.jpg'%num
         img = cv2.imread(img_path)
         if not img is None:
