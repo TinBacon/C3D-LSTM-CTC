@@ -28,7 +28,7 @@ import pdb
 import scipy.io as sio
 import math
 
-import ctc.py
+import ctc
 
 # in order to do data augmentation
 from skimage.transform import SimilarityTransform
