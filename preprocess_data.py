@@ -5,27 +5,26 @@ import csv
 import numpy as np
 
 def make_gesture(start, end, path):
+
     mask = []
     img_list = [] 
     img_dir_list = [] 
-    img_dir = os.path.split(path)[0].replace('labels/s', 'images_160-120/S') + '/Color/rgb' + os.path.splitext(path)[0][-1]
 
+    img_dir = os.path.split(path)[0].replace('labels/s', 'images_160-120/S') + '/Color/rgb' + os.path.splitext(path)[0][-1]
     valid_length = 40
     invalid_length = 16
 
-    length = end - start + 1
-    if length > valid_length:
-        skip = int(valid_length / (length - valid_length)) + 1
-    else:
-        skip = 100000
-
     # get images and masks
+    # every sequence has 56 frames include 8 non-gesture frames and 40 gesture frames
+    # there is only one gesture in a sequence
     if start <= invalid_length/2:
         frame_start = 1
     else:
         frame_start = start-invalid_length/2
 
+    # get non-gesture frames
     for num in range(frame_start, start):
+
         img_path = img_dir + '/%06d.jpg'%num
         img = cv2.imread(img_path)
         if img is None:
@@ -35,7 +34,15 @@ def make_gesture(start, end, path):
         img_dir_list.append(img_path) 
         mask += [1]
     
-    count_skip = 1
+    # get gesture frames
+    # set skip number to reduce gesture frames if needed
+    length = end - start + 1
+    if length > valid_length:
+        skip = int(valid_length / (length - valid_length)) + 1
+    else:
+        skip = 100000
+
+    count_skip = 1  
     for num in range(start, end+1):
 
         if count_skip:
@@ -52,8 +59,10 @@ def make_gesture(start, end, path):
     if len(mask) > valid_length+invalid_length/2:
         print(len(mask))
 
+    # pad the sequence to 56 frames
     pre_length = len(mask)
     for num in range(end+1, end+(invalid_length+valid_length-pre_length)+1):
+        
         img_path = img_dir + '/%06d.jpg'%num
         img = cv2.imread(img_path)
         if not img is None:
